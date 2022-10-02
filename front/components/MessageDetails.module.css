@@ -1,0 +1,16 @@
+.center__icon {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.center__text {
+  text-align: center;
+}
+
+.empty__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 100px;
+}

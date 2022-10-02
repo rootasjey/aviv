@@ -1,0 +1,36 @@
+.container {
+  z-index: 99;
+}
+
+.appBar {
+  background-color: white;
+  color: black;
+  /* width: 200%; */
+}
+
+.accent {
+  color: rgb(80 9 221);
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 24px;
+}
+
+.badge {
+  font-size: 16px;
+  margin-left: 12px;
+}
+
+.unreadCount {
+  margin-right: 18px;
+}
+
+/* drawer */
+.drawer {
+  margin-top: 10px;
+}
+
+.read {
+  opacity: 0.4;
+}

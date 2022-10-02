@@ -1,0 +1,37 @@
+.container {
+  padding: 12px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.contact {
+  font-weight: 600;
+  font-size: 1.4em;
+  line-height: normal;
+}
+
+.date {
+  position: absolute;
+  right: 10px;
+}
+
+.date.selected {
+  color: #5009dc;
+}
+
+.subject {
+  opacity: 0.8;
+}
+
+.body {
+  opacity: 0.6;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
