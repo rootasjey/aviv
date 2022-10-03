@@ -1,7 +1,8 @@
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme, ThemeProvider, useTheme } from "@mui/material/styles";
 import React, { ReactElement, useEffect } from "react";
 import Head from 'next/head';
 import { useRouter } from "next/router";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -64,6 +65,10 @@ export default function Layout(props: LayoutProps) {
   const router = useRouter()
   const { rid } = router.query
 
+  const theme = useTheme()
+  const isMobileSize = useMediaQuery(theme.breakpoints.down('sm'))
+  const isVerySmall = useMediaQuery(theme.breakpoints.between(0, 470))
+
   const [realtors, setRealtors] = React.useState<Realtor[]>([])
   const [realtorId, setRealtorId] = React.useState<string>(typeof rid === 'string' ? rid : '0');
   const [unreadCount, setUnreadCount] = React.useState<number>(0);
@@ -90,7 +95,7 @@ export default function Layout(props: LayoutProps) {
     setLoading(false)
   }
   
-  const loadMore = async (newTempCount: number) => {
+  const loadMore = async () => {
     if (loading || !hasNextPage || realtorId === '0') { 
       return 
     }    
@@ -130,12 +135,16 @@ export default function Layout(props: LayoutProps) {
     })
   }
 
+  const noMessageSelected: boolean = typeof selectedMessage === 'undefined'
+  
   const messageDrawer = (
     <MessageDrawer 
       loading={loading}
       messages={messages}
       loadMore={loadMore}
       hasNextPage={hasNextPage}
+      hidden={isMobileSize && !noMessageSelected}
+      isMobileSize={isMobileSize}
       onSelectedMessageChanged={(message: Message, index: number) => {
         setSelectedMessage(message)
         handleUnreadCount(message, index)
@@ -146,8 +155,9 @@ export default function Layout(props: LayoutProps) {
 
   const mainAppBar = (
     <MainAppBar 
-      realtors={realtors} 
+      isVerySmall={isVerySmall}
       onRailtorChanged={onRailtorChanged}
+      realtors={realtors} 
       selectedRealtor={realtorId}
       unreadCount={unreadCount}
     />
@@ -156,11 +166,15 @@ export default function Layout(props: LayoutProps) {
   const messageDetails = (
     <MessageDetails 
       selectedMessage={selectedMessage} 
+      hidden={isMobileSize && noMessageSelected}
+      onBack={() => {
+        setSelectedMessage(undefined)
+        window.history.pushState({}, '', `/realtors/${realtorId}`)
+      }}
     />
   )
-
   
-  useEffect(() => {    
+  useEffect(() => {
     const { rid: newRid, mid: newMid } = router.query
     if (typeof newRid !== 'string') {
       return

@@ -7,17 +7,21 @@ import MailIcon from "@mui/icons-material/MailOutlineOutlined";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import { getIcon } from "../utils/icons";
 
 import styles from "./MessageDetails.module.css"
 import { getBodyMessageDate } from "../utils/date";
+import IconButton from "@mui/material/IconButton";
 
 type ComponentProps = {
-  selectedMessage: Message | undefined;
+  selectedMessage: Message | undefined
+  hidden: boolean
+  onBack: Function
 }
 
-export default function MessageDetails({ selectedMessage } : ComponentProps) {
+export default function MessageDetails({ selectedMessage, hidden, onBack } : ComponentProps) {
   const emptyComponent = (
     <>
       <div className={styles.center__icon}><MailIcon sx={{ fontSize: 60 }}/></div>
@@ -93,9 +97,22 @@ export default function MessageDetails({ selectedMessage } : ComponentProps) {
     ? emptyComponent 
     : messageView
 
+  if (hidden) {
+    return (<div></div>)
+  }
+
+  const iconButton = typeof selectedMessage === "undefined" 
+    ? (<div></div>) 
+    : (
+      <IconButton sx={{ mb: 1.5 }} aria-label="back" onClick={() => onBack()}>
+        <ArrowBackIcon />
+      </IconButton>
+    )
+
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
+        {iconButton}
         {child}
       </Box>
   );

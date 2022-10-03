@@ -10,17 +10,25 @@ import useInfiniteScroll from 'react-infinite-scroll-hook';
 import styles from "./MainAppBar.module.css";
 import MessageItem from "./MessageItem";
 
-const drawerWidth = 400;
-
 type ComponentProps = {
+  hasNextPage: boolean
+  hidden: boolean
+  isMobileSize: boolean
   loading: boolean
+  loadMore: Function
   messages: Message[],
   onSelectedMessageChanged: Function
-  hasNextPage: boolean
-  loadMore: Function
 }
 
-export default function MessageDrawer({ messages, onSelectedMessageChanged, loadMore, loading, hasNextPage }: ComponentProps) {
+export default function MessageDrawer({ 
+  hasNextPage, 
+  hidden,
+  isMobileSize,
+  loading,
+  loadMore, 
+  messages, 
+  onSelectedMessageChanged, 
+}: ComponentProps) {
   const [sentryRef, { rootRef }] = useInfiniteScroll({
     loading,
     hasNextPage,
@@ -28,6 +36,12 @@ export default function MessageDrawer({ messages, onSelectedMessageChanged, load
     rootMargin: '0px 0px 0px 0px',
   });
 
+  if (hidden) {
+    return (<div></div>)
+  }
+
+  const drawerWidth = isMobileSize ? '100%' : 400
+  
   return (
     <Drawer
         variant="permanent"

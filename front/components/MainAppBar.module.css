@@ -5,7 +5,6 @@
 .appBar {
   background-color: white;
   color: black;
-  /* width: 200%; */
 }
 
 .accent {
@@ -14,12 +13,11 @@
 
 .logo {
   font-weight: 900;
-  font-size: 24px;
 }
 
 .badge {
-  font-size: 16px;
   margin-left: 12px;
+  font-weight: 600;
 }
 
 .unreadCount {

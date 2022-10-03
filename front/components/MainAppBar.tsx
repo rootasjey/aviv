@@ -10,47 +10,91 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 import styles from "./MainAppBar.module.css";
+import NativeSelect from '@mui/material/NativeSelect';
+import InputBase from '@mui/material/InputBase';
+import { styled } from '@mui/material/styles';
 
+const getInputStyle = (isMobileSize: boolean) => {
+  return styled(InputBase)(({ theme }) => ({
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+    '& .MuiInputBase-input': {
+      borderRadius: 4,
+      position: 'relative',
+      backgroundColor: theme.palette.background.paper,
+      border: '1px solid #ced4da',
+      fontSize: 16,
+      padding: isMobileSize ? '4px 26px 4px 12px' : '6px 26px 6px 12px',
+      transition: theme.transitions.create(['border-color', 'box-shadow']),
+      // Use the system font instead of the default Roboto font.
+      fontFamily: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(','),
+      '&:focus': {
+        borderRadius: 4,
+        borderColor: '#80bdff',
+        boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+      },
+    },
+  }));
+}
 type ComponentProps = {
-  realtors: Realtor[]
+  isVerySmall: boolean
   onRailtorChanged: Function
+  realtors: Realtor[]
   selectedRealtor: string
   unreadCount: number
 }
 
-export default function MainAppBar({ realtors, onRailtorChanged, selectedRealtor, unreadCount }: ComponentProps) {
-  const handleChange = (event: SelectChangeEvent) => {
+export default function MainAppBar({ 
+  realtors, 
+  onRailtorChanged, 
+  selectedRealtor, 
+  unreadCount, 
+  isVerySmall, 
+}: ComponentProps) {
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onRailtorChanged(event.target.value)
   };
+  
+  const InputStyle = getInputStyle(isVerySmall)
   
   return (
     <AppBar color='primary' elevation={4} className={styles.appBar} position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} className={styles.logo}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: isVerySmall ? 16 : 24 }} className={styles.logo}>
           aviv group<span className={styles.accent}>_</span>
         </Typography>
         
-        <Button variant="contained" size="medium" disableElevation className={styles.unreadCount}>
-          <EmailOutlinedIcon />
-          <span className={styles.badge}>{unreadCount}</span>
+        <Button variant="contained" size={isVerySmall ? 'small' : 'medium'} disableElevation className={styles.unreadCount}>
+          <EmailOutlinedIcon fontSize={isVerySmall ? 'small' : 'medium'} />
+          <Typography fontSize={isVerySmall ? 16 : 18} sx={{ }} className={styles.badge}>{unreadCount}</Typography>
         </Button>
 
-        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-          <InputLabel id="demo-select-small">Agence</InputLabel>
-          <Select
-            labelId="demo-select-small"
-            id="demo-select-small"
+        <FormControl sx={{ m: 1 }} size="small" variant="filled">
+          <NativeSelect
+            id="realtor-select"
             value={selectedRealtor}
-            label="Agence"
             onChange={handleChange}
+            input={<InputStyle />}
           >
 
             {realtors.map((realtor: Realtor, index) => (
-              <MenuItem key={realtor.id} value={realtor.id}>
+              <option key={realtor.id} value={realtor.id}>
                 {realtor.name}
-              </MenuItem>
+              </option>
             ))}
-          </Select>
+          </NativeSelect>
         </FormControl>
       </Toolbar>
     </AppBar>
