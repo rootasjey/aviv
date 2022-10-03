@@ -81,6 +81,24 @@ const Home: NextPage<ApiProps> = (props) => {
     setHasNextPage(newMessages.length === pageSize)
   }
 
+  const handleUnreadCount = (message: Message, index: number) => {
+    if (message.read) { return }
+
+    setUnreadCount(unreadCount - 1)
+    messages[index].read = true
+    setMessages(messages)
+
+    fetch(`${baseUrl}/realtors/${realtorId}/messages/${message.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        read: false,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+  }
+
   const messageDrawer = (
     <MessageDrawer 
       loading={loading}
@@ -89,6 +107,7 @@ const Home: NextPage<ApiProps> = (props) => {
       hasNextPage={hasNextPage}
       onSelectedMessageChanged={(message: Message, index: number) => {
         setSelectedMessage(message)
+        handleUnreadCount(message, index)
       }}
     />
   )
