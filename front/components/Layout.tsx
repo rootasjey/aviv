@@ -127,7 +127,7 @@ export default function Layout(props: LayoutProps) {
     fetch(`${BASE_URL}/realtors/${realtorId}/messages/${message.id}`, {
       method: 'PATCH',
       body: JSON.stringify({
-        read: false,
+        read: true,
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
