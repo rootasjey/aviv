@@ -18,6 +18,12 @@ import styles from './Layout.module.css'
 const BASE_URL: string = 'http://localhost:8080'
 const PAGE_SIZE: number = 10
 
+const fetchMessage = async (realtorId: string, messageId: string) => {
+  const messagesRes = await fetch(`${BASE_URL}/realtors/${realtorId}/messages/${messageId}`);
+  const message: Message = await messagesRes.json();
+  return message;
+}
+
 const fetchMessages = async (realtorId: string, page: number) => {
   const messagesRes = await fetch(`${BASE_URL}/realtors/${realtorId}/messages/?page=${page}&page_size=${PAGE_SIZE}`);
   const messages: Message[] = await messagesRes.json();
@@ -50,6 +56,7 @@ const _theme = createTheme({
  * NOTE: Avoid running twice initial page request in Next.JS
  * messing with data intialization according to router.
  * (router doesn't have its correct property & path on 1st run).
+ * see: https://github.com/vercel/next.js/issues/35822
  */
 let _debounce: NodeJS.Timeout;
 
@@ -104,8 +111,13 @@ export default function Layout(props: LayoutProps) {
     if (message.read) { return }
 
     setUnreadCount(unreadCount - 1)
-    messages[index].read = true
-    setMessages(messages)
+
+    if (index > -1) {
+      messages[index].read = true
+      setMessages(messages)
+    }
+
+    if (realtorId === '0') { return }
 
     fetch(`${BASE_URL}/realtors/${realtorId}/messages/${message.id}`, {
       method: 'PATCH',
@@ -127,6 +139,7 @@ export default function Layout(props: LayoutProps) {
       onSelectedMessageChanged={(message: Message, index: number) => {
         setSelectedMessage(message)
         handleUnreadCount(message, index)
+        window.history.pushState({}, '', `/realtors/${realtorId}/messages/${message.id}`)
       }}
     />
   )
@@ -147,15 +160,27 @@ export default function Layout(props: LayoutProps) {
   )
 
   
-  useEffect(() => {
-    const newRid = router.query.rid
+  useEffect(() => {    
+    const { rid: newRid, mid: newMid } = router.query
     if (typeof newRid !== 'string') {
       return
     }
 
     clearTimeout(_debounce)
     onRailtorChanged(newRid)
-  }, [router.query.rid])
+
+    if (typeof newMid !== 'string') {
+      return
+    }
+
+    fetchMessage(newRid, newMid)
+    .then((messageResp) => {
+      if (!messageResp) { return }
+      
+      setSelectedMessage(messageResp)
+      handleUnreadCount(messageResp, -1)
+    })
+  }, [router.query.rid, router.query.mid])
 
   useEffect(() => {
     clearTimeout(_debounce)

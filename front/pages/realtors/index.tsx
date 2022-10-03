@@ -1,7 +1,7 @@
-function Realtors() {
+function RealtorsPage() {
   return (
     <></>
   )
 }
 
-export default Realtors
+export default RealtorsPage
