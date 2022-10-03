@@ -14,3 +14,38 @@
   align-items: center;
   padding-top: 100px;
 }
+
+.card__content {
+  display: flex;
+}
+
+.header__contact__name {
+  font-weight: 600;
+}
+
+.body__contact__name {
+  font-weight: 600;
+  font-size: 1.2em;
+}
+
+.body__date {
+  font-size: 1.2em;
+}
+
+.body_message_content {
+  font-size: 1em;
+  margin-top: 2em;
+}
+
+.contact__block {
+  display: flex;
+  flex-direction: row;
+}
+
+.contact__block__content {
+  margin-right: 6em;
+}
+
+.contact_value {
+  color: #5009dc;
+}

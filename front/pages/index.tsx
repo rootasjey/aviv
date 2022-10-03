@@ -1,6 +1,5 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
 import '@fontsource/roboto/300.css';
@@ -10,7 +9,13 @@ import '@fontsource/roboto/700.css';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import MainContent from '../components/MainContent';
+import MessageDrawer from '../components/MessageDrawer';
+import MainAppBar from '../components/MainAppBar';
+import React from 'react';
+import MessageDetails from '../components/MessageDetails';
 
+const baseUrl: string = 'http://localhost:8080'
+const pageSize: number = 10
 
 const theme = createTheme({
   palette: {
@@ -22,12 +27,87 @@ const theme = createTheme({
 
 type ApiProps = {
   messages: Message[]
-  selectedMessage: Message | undefined
   realtors: Realtor[]
 }
 
+const fetchMessages = async (realtorId: string, page: number) => {
+  const messagesRes = await fetch(`${baseUrl}/realtors/${realtorId}/messages/?page=${page}&page_size=${pageSize}`);
+  const messages: Message[] = await messagesRes.json();
+  return messages ?? [];
+}
+
 const Home: NextPage<ApiProps> = (props) => {
+  let initialRealtorId = 0;
+  let initialUnreadCount = 0;
+
+  const realtors = props.realtors;
   
+  if (realtors.length > 0) {
+    initialRealtorId = realtors[0].id
+    initialUnreadCount = realtors[0].unread_messages
+  }
+
+  const [realtorId, setRealtorId] = React.useState(initialRealtorId.toString());
+  const [unreadCount, setUnreadCount] = React.useState(initialUnreadCount);
+  const [messages, setMessages] = React.useState(props.messages ?? []);
+  const [selectedMessage, setSelectedMessage] = React.useState<Message>();
+
+  const [page, setPage] = React.useState(1);
+  const [loading, setLoading] = React.useState(false);
+  const [hasNextPage, setHasNextPage] = React.useState(true);
+
+  const onRailtorChanged = async (newRealtorId: string) => {
+    if (loading) { return }
+
+    setLoading(true)
+    const messages = await fetchMessages(newRealtorId, 1)
+    setRealtorId(newRealtorId)
+    setMessages(messages ?? [])
+    setLoading(false)
+  }
+  
+  const loadMore = async (newTempCount: number) => {
+    if (loading || !hasNextPage) { 
+      return 
+    }
+
+    setLoading(true)
+    const newPage = page + 1
+    const newMessages = await fetchMessages(realtorId, newPage)
+
+    setMessages([...messages, ...newMessages])
+    setPage(newPage)
+    setLoading(false)
+    setHasNextPage(newMessages.length === pageSize)
+  }
+
+  const messageDrawer = (
+    <MessageDrawer 
+      loading={loading}
+      messages={messages}
+      loadMore={loadMore}
+      hasNextPage={hasNextPage}
+      onSelectedMessageChanged={(message: Message, index: number) => {
+        setSelectedMessage(message)
+      }}
+    />
+  )
+
+  const mainAppBar = (
+    <MainAppBar 
+      realtors={props.realtors} 
+      onRailtorChanged={onRailtorChanged}
+      selectedRealtor={realtorId}
+      unreadCount={unreadCount}
+    />
+  )
+
+  const messageDetails = (
+    <MessageDetails 
+      selectedMessage={selectedMessage} 
+    />
+  )
+
   return (
     <ThemeProvider theme={theme}>
       <div className={styles.container}>
@@ -39,7 +119,12 @@ const Home: NextPage<ApiProps> = (props) => {
         </Head>
 
         <main className={styles.main}>
-          <MainContent {...props} />
+          <MainContent 
+            mainAppBar={mainAppBar}
+            messageDrawer={messageDrawer} 
+            messageDetails={messageDetails}
+            {...props} 
+          />
         </main>
       </div>
     </ThemeProvider>
@@ -47,16 +132,13 @@ const Home: NextPage<ApiProps> = (props) => {
 }
 
 export async function getServerSideProps() {
-  const realtorsRes = await fetch("http://localhost:8080/realtors/?page=1&page_size=10");
+  const realtorsRes = await fetch(`${baseUrl}/realtors/?page=1&page_size=${pageSize}`);
   const realtors = await realtorsRes.json();
-  
-  const messagesRes = await fetch("http://localhost:8080/realtors/101/messages/?page=1&page_size=10");
-  const messages = await messagesRes.json();
+  const messages = await fetchMessages(realtors[0].id, 1)
   
   return {
     props: {
       locale: "fr",
-      // selectedMessage: undefined,
       messages,
       realtors,
     },

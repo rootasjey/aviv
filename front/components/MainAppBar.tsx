@@ -13,24 +13,14 @@ import styles from "./MainAppBar.module.css";
 
 type ComponentProps = {
   realtors: Realtor[]
+  onRailtorChanged: Function
+  selectedRealtor: string
+  unreadCount: number
 }
 
-export default function MainAppBar({ realtors }: ComponentProps) {
-  let initialRealtorId = 0;
-  let initialUnreadCount = 0;
-  
-  if (realtors.length > 0) {
-    initialRealtorId = realtors[0].id
-    initialUnreadCount = realtors[0].unread_messages
-    console.log(initialUnreadCount);
-    
-  }
-
-  const [realtorId, setRealtorId] = React.useState(initialRealtorId.toString());
-  const [realtorCount, setRealtorCount] = React.useState(initialUnreadCount)
-
+export default function MainAppBar({ realtors, onRailtorChanged, selectedRealtor, unreadCount }: ComponentProps) {
   const handleChange = (event: SelectChangeEvent) => {
-    setRealtorId(event.target.value);
+    onRailtorChanged(event.target.value)
   };
   
   return (
@@ -42,7 +32,7 @@ export default function MainAppBar({ realtors }: ComponentProps) {
         
         <Button variant="contained" size="medium" disableElevation className={styles.unreadCount}>
           <EmailOutlinedIcon />
-          <span className={styles.badge}>{realtorCount}</span>
+          <span className={styles.badge}>{unreadCount}</span>
         </Button>
 
         <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -50,7 +40,7 @@ export default function MainAppBar({ realtors }: ComponentProps) {
           <Select
             labelId="demo-select-small"
             id="demo-select-small"
-            value={realtorId}
+            value={selectedRealtor}
             label="Agence"
             onChange={handleChange}
           >
@@ -60,13 +50,6 @@ export default function MainAppBar({ realtors }: ComponentProps) {
                 {realtor.name}
               </MenuItem>
             ))}
-            {/* <MenuItem value={-1}>
-              <em>None</em>
-            </MenuItem>
-
-            <MenuItem value={1}>Agence 1</MenuItem>
-            <MenuItem value={2}>Agence 2</MenuItem>
-            <MenuItem value={3}>Agence 3</MenuItem> */}
           </Select>
         </FormControl>
       </Toolbar>

@@ -4,58 +4,99 @@ import Typography from "@mui/material/Typography";
 
 import MailIcon from "@mui/icons-material/MailOutlineOutlined";
 
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import ListItemIcon from "@mui/material/ListItemIcon";
+
+import { getIcon } from "../utils/icons";
+
 import styles from "./MessageDetails.module.css"
+import { getBodyMessageDate } from "../utils/date";
 
 type ComponentProps = {
   selectedMessage: Message | undefined;
 }
 
 export default function MessageDetails({ selectedMessage } : ComponentProps) {
-  console.log(selectedMessage);
+  const emptyComponent = (
+    <>
+      <div className={styles.center__icon}><MailIcon sx={{ fontSize: 60 }}/></div>
+      <Typography variant="h2" className={styles.center__text} paragraph>
+        Click on a message to show its content.
+      </Typography>
+    </>
+  )
+
+  let messageView = <div>message?</div>
+
+  if (selectedMessage) {
+    messageView = (
+      <>
+        <Card sx={{ minWidth: 275 }} elevation={0}>
+          <CardContent>
+            <div className={styles.card__content}>
+              <ListItemIcon>
+                {getIcon(selectedMessage.type, true)}
+              </ListItemIcon>
+
+              <div>
+                <Typography sx={{ fontSize: 20, mb: 1.5 }} className={styles.header__contact__name}>
+                  {`${selectedMessage.contact.firstname} ${selectedMessage.contact.lastname}`}
+                </Typography>
+
+                <div className={styles.contact__block}>
+                  <div className={styles.contact__block__content}>
+                    <Typography component="div" color="text.secondary">
+                      Email
+                    </Typography>
+                    <Typography component="div" color="text.secondary">
+                      Phone
+                    </Typography>
+                  </div>
+
+                  <div>
+                    <Typography component="div" className={styles.contact_value}>
+                      {selectedMessage.contact.email}
+                    </Typography>
+
+                    <Typography component="div" className={styles.contact_value}>
+                      {selectedMessage.contact.phone}
+                    </Typography>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card sx={{ mt: 4, p: 2 }} elevation={0}>
+          <CardContent>
+            <Typography className={styles.body__contact__name}>
+              {`${selectedMessage.contact.firstname} ${selectedMessage.contact.lastname}`}
+            </Typography>
+            
+            <Typography color="text.secondary" className={styles.body__date}>
+              {getBodyMessageDate(selectedMessage.date)}
+            </Typography>
+
+            <Typography color="text.primary" className={styles.body_message_content}>
+              {selectedMessage.body}
+            </Typography>
+          </CardContent>
+        </Card>
+      </>
+    )
+  }
   
+  const child = typeof selectedMessage === "undefined" 
+    ? emptyComponent 
+    : messageView
+
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        
-        {typeof selectedMessage === "undefined" 
-          ? (
-              <>
-                <div className={styles.center__icon}><MailIcon sx={{ fontSize: 60 }}/></div>
-                <Typography variant="h2" className={styles.center__text} paragraph>
-                  Click on a message to show its content.
-                </Typography>
-              </>
-            ) 
-          : (<div>message?</div>)
-        }
-        
-        {/* <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-          enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-          imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-          Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-          Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-          nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-          leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-          feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-          consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-          sapien faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-          eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-          neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-          tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-          sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-          tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-          gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-          et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-          tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography> */}
+        {child}
       </Box>
   );
 }
