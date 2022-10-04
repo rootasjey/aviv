@@ -157,7 +157,7 @@ describe('MessageDrawer', () => {
   ]
 
   it('renders <MessageDrawer />', () => {
-    const { getByText, getAllByText, getByTestId, getAllByTestId, getByLabelText } = render(
+    const { getByText, getAllByText, getAllByTestId } = render(
       <MessageDrawer
         hasNextPage={true}
         hidden={false}

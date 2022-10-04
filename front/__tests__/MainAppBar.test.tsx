@@ -29,10 +29,10 @@ describe('MainAppBar', () => {
   it('renders <MainAppBar />', async () => {
     const selectedRealtor = realtors[0]
 
-    const { getByText, getByTestId, getByRole, getAllByRole, getByLabelText } = render(
+    const { getByText, getByTestId, getByRole } = render(
       <MainAppBar 
         isVerySmall={false}
-        onRailtorChanged={(newRailtorId: string) => {}}
+        onRailtorChanged={() => {}}
         unreadCount={selectedRealtor.unread_messages}
         selectedRealtor={selectedRealtor.id.toString()}
         realtors={realtors}
