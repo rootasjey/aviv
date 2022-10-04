@@ -1,9 +1,16 @@
-describe('Desktop tests', () => {
+describe('mobile tests', () => {
+  beforeEach(() => {
+    cy.viewport('iphone-5')
+  })
+
   it('should navigate to home page', () => {
     cy.visit('http://localhost:3000')
     cy.contains('aviv group')
     cy.contains('John Davis')
+
+    cy.get('main').contains('Click on a message to show its content.').should('not.exist')
   })
+
 
   it('should update selected option when changing agency', () => {
     cy.visit('http://localhost:3000')
