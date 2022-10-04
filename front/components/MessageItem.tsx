@@ -6,14 +6,11 @@ import styles from './MessageItem.module.css';
 
 import { getIcon } from "../utils/icons";
 import { getRelativeDate } from "../utils/date";
+import { getMessageBody } from "../utils/texts";
 
 type Props = {
   message: Message
   onClick: Function
-}
-
-const getMessageBody = (body: string) => {
-  return body.length > 50 ? `${body.substring(0, 50)}...` : body;
 }
 
 export default function MessageItem({message, onClick} : Props) {

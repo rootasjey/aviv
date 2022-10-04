@@ -25,3 +25,23 @@ export const getIcon = (type: string, read: boolean) => {
       return <MailIcon color={read ? "inherit" : "primary"} />;
   }
 }
+
+export const getIcontring = (type: string, read: boolean) => {
+  switch (type) {
+    case "email":
+      return read 
+        ? 'DraftsIcon'
+        : 'MailIcon'
+        
+      case "phone":
+        return 'PhoneIcon'
+        
+      case "sms":
+        return read 
+          ? 'SmsIcon'
+          : 'SmsFailedIcon'
+      
+    default:
+      return 'MailIcon'
+  }
+}

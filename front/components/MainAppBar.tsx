@@ -5,15 +5,17 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 import styles from "./MainAppBar.module.css";
 import NativeSelect from '@mui/material/NativeSelect';
 import InputBase from '@mui/material/InputBase';
 import { styled } from '@mui/material/styles';
 
+/**
+ * Return a material style for a native input.
+ * @param isMobileSize If true, the input will take less space.
+ * @returns A component to style our native input.
+ */
 const getInputStyle = (isMobileSize: boolean) => {
   return styled(InputBase)(({ theme }) => ({
     'label + &': {
@@ -48,6 +50,7 @@ const getInputStyle = (isMobileSize: boolean) => {
     },
   }));
 }
+
 type ComponentProps = {
   isVerySmall: boolean
   onRailtorChanged: Function
@@ -81,10 +84,10 @@ export default function MainAppBar({
           <Typography fontSize={isVerySmall ? 16 : 18} sx={{ }} className={styles.badge}>{unreadCount}</Typography>
         </Button>
 
-        <FormControl sx={{ m: 1 }} size="small" variant="filled">
+        <FormControl sx={{ m: 1 }} size="small" variant="outlined">
           <NativeSelect
             id="realtor-select"
-            value={selectedRealtor}
+            defaultValue={selectedRealtor}
             onChange={handleChange}
             input={<InputStyle />}
           >
