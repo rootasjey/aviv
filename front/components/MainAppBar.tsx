@@ -55,14 +55,14 @@ type ComponentProps = {
   isVerySmall: boolean
   onRailtorChanged: Function
   realtors: Realtor[]
-  selectedRealtor: string
+  selectedRealtorId: string
   unreadCount: number
 }
 
 export default function MainAppBar({ 
   realtors, 
   onRailtorChanged, 
-  selectedRealtor, 
+  selectedRealtorId, 
   unreadCount, 
   isVerySmall, 
 }: ComponentProps) {
@@ -86,8 +86,9 @@ export default function MainAppBar({
 
         <FormControl sx={{ m: 1 }} size="small" variant="outlined">
           <NativeSelect
+            key={'realtor-select'}
             id="realtor-select"
-            defaultValue={selectedRealtor}
+            defaultValue={selectedRealtorId}
             onChange={handleChange}
             input={<InputStyle />}
           >

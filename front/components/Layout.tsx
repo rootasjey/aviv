@@ -81,7 +81,6 @@ export default function Layout(props: LayoutProps) {
   const [hasNextPage, setHasNextPage] = React.useState(true);
 
   const onRailtorChanged = async (newRealtorId: string) => {
-    setLoading(true)
     const realtor = await fetchRealtor(newRealtorId)
     const messages = await fetchMessages(newRealtorId, 1)
 
@@ -187,7 +186,7 @@ export default function Layout(props: LayoutProps) {
       isVerySmall={isVerySmall}
       onRailtorChanged={onRailtorChanged}
       realtors={realtors} 
-      selectedRealtor={realtorId}
+      selectedRealtorId={realtorId}
       unreadCount={unreadCount}
     />
   )

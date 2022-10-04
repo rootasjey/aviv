@@ -34,7 +34,7 @@ describe('MainAppBar', () => {
         isVerySmall={false}
         onRailtorChanged={() => {}}
         unreadCount={selectedRealtor.unread_messages}
-        selectedRealtor={selectedRealtor.id.toString()}
+        selectedRealtorId={selectedRealtor.id.toString()}
         realtors={realtors}
       />
     )
