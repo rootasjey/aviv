@@ -72,6 +72,7 @@ export default function Layout(props: LayoutProps) {
   const [realtors, setRealtors] = React.useState<Realtor[]>([])
   const [realtorId, setRealtorId] = React.useState<string>(typeof rid === 'string' ? rid : '0');
   const [unreadCount, setUnreadCount] = React.useState<number>(0);
+  const [selectedMessageIndex, setSelectedMessageIndex] = React.useState<number>(-1);
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [selectedMessage, setSelectedMessage] = React.useState<Message>();
 
@@ -135,6 +136,38 @@ export default function Layout(props: LayoutProps) {
     })
   }
 
+  const markUnread = () => {
+    if (typeof selectedMessage === 'undefined') { return }
+
+    fetch(`${BASE_URL}/realtors/${realtorId}/messages/${selectedMessage.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        read: false,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+
+    if (selectedMessageIndex < 0) { return }
+    messages[selectedMessageIndex].read = false
+    setUnreadCount(unreadCount + 1)
+    setMessages(messages)
+  }
+
+  const onBack = () => {
+    setSelectedMessage(undefined)
+    setSelectedMessageIndex(-1)
+    window.history.pushState({}, '', `/realtors/${realtorId}`)
+  }
+
+  const onSelectedMessageChanged = (message: Message, index: number) => {
+    setSelectedMessage(message)
+    setSelectedMessageIndex(index)
+    handleUnreadCount(message, index)
+    window.history.pushState({}, '', `/realtors/${realtorId}/messages/${message.id}`)
+  }
+
   const noMessageSelected: boolean = typeof selectedMessage === 'undefined'
   
   const messageDrawer = (
@@ -145,11 +178,7 @@ export default function Layout(props: LayoutProps) {
       hasNextPage={hasNextPage}
       hidden={isMobileSize && !noMessageSelected}
       isMobileSize={isMobileSize}
-      onSelectedMessageChanged={(message: Message, index: number) => {
-        setSelectedMessage(message)
-        handleUnreadCount(message, index)
-        window.history.pushState({}, '', `/realtors/${realtorId}/messages/${message.id}`)
-      }}
+      onSelectedMessageChanged={onSelectedMessageChanged}
     />
   )
 
@@ -165,12 +194,10 @@ export default function Layout(props: LayoutProps) {
 
   const messageDetails = (
     <MessageDetails 
-      selectedMessage={selectedMessage} 
       hidden={isMobileSize && noMessageSelected}
-      onBack={() => {
-        setSelectedMessage(undefined)
-        window.history.pushState({}, '', `/realtors/${realtorId}`)
-      }}
+      markUnread={markUnread}
+      onBack={onBack}
+      selectedMessage={selectedMessage}
     />
   )
   

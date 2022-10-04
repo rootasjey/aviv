@@ -7,7 +7,9 @@ import MailIcon from "@mui/icons-material/MailOutlineOutlined";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import ListItemIcon from "@mui/material/ListItemIcon";
+
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 
 import { getIcon } from "../utils/icons";
 
@@ -16,12 +18,13 @@ import { getBodyMessageDate } from "../utils/date";
 import IconButton from "@mui/material/IconButton";
 
 type ComponentProps = {
-  selectedMessage: Message | undefined
   hidden: boolean
+  markUnread: Function
   onBack: Function
+  selectedMessage: Message | undefined
 }
 
-export default function MessageDetails({ selectedMessage, hidden, onBack } : ComponentProps) {
+export default function MessageDetails({ hidden, markUnread, onBack, selectedMessage,  } : ComponentProps) {
   const emptyComponent = (
     <>
       <div className={styles.center__icon}><MailIcon sx={{ fontSize: 60 }}/></div>
@@ -101,18 +104,24 @@ export default function MessageDetails({ selectedMessage, hidden, onBack } : Com
     return (<div></div>)
   }
 
-  const iconButton = typeof selectedMessage === "undefined" 
+  const buttonBar = typeof selectedMessage === "undefined" 
     ? (<div></div>) 
     : (
+      <>
       <IconButton sx={{ mb: 1.5 }} aria-label="back" onClick={() => onBack()}>
         <ArrowBackIcon />
       </IconButton>
+
+      <IconButton sx={{ mb: 1.5 }} aria-label="mark-unread" onClick={() => markUnread()}>
+        <MarkEmailUnreadIcon />
+      </IconButton>
+      </>
     )
 
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        {iconButton}
+        {buttonBar}
         {child}
       </Box>
   );

@@ -23,9 +23,10 @@ describe('MessageDetails', () => {
   it('renders <MessageDetails />', () => {
     const { getByText, getAllByText, getByTestId, getByLabelText } = render(
       <MessageDetails 
-        selectedMessage={message}
         hidden={false}
+        markUnread={() => {}}
         onBack={() => {}}
+        selectedMessage={message}
       />
     )
 
@@ -41,5 +42,6 @@ describe('MessageDetails', () => {
     expect(getByText(message.body)).toBeInTheDocument()
     expect(getByTestId('DraftsIcon')).toBeInTheDocument()
     expect(getByLabelText('back')).toBeInTheDocument()
+    expect(getByLabelText('mark-unread')).toBeInTheDocument()
   })
 })
