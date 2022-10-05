@@ -6,14 +6,11 @@
 
 The following is the document update based on my work.
 
-
-![](./screnshots/aviv_demo_1.mp4)
-
 | Desktop | Mobile |
 |---------|--------|
 | ![](./screnshots/desktop_1.png) | <img src="./screnshots/mobile_1.png" style="width: 60%;" /> |
 
-[Video demo](../screnshots/aviv_demo_1.mp4)
+[Video demo](https://www.loom.com/share/78ad8b291e0b4c16ba111a84ec91cb0c)
 
 This is an application prototype on a backoffice to view and manages messages from various sources (email, phone, sms).
 
