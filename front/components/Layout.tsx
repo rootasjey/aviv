@@ -19,6 +19,18 @@ import styles from './Layout.module.css'
 const BASE_URL: string = 'http://localhost:8080'
 const PAGE_SIZE: number = 10
 
+type HandleUnreadCountProps = {
+  index: number
+  message: Message
+  messagesOverride?: Message[]
+  overrideRid?: string
+  overrideUnreadCount?: number
+}
+
+type LayoutProps = {
+  children: ReactElement | ReactElement[]
+}
+
 const fetchMessage = async (realtorId: string, messageId: string) => {
   const messagesRes = await fetch(`${BASE_URL}/realtors/${realtorId}/messages/${messageId}`);
   const message: Message = await messagesRes.json();
@@ -41,10 +53,6 @@ const fetchRealtors = async (): Promise<Realtor[]> => {
   return await res.json()
 }
 
-type LayoutProps = {
-  children: ReactElement | ReactElement[]
-}
-
 const _theme = createTheme({
   palette: {
     primary: {
@@ -63,14 +71,13 @@ let _debounce: NodeJS.Timeout;
 
 export default function Layout(props: LayoutProps) {
   const router = useRouter()
-  const { rid } = router.query
 
   const theme = useTheme()
   const isMobileSize = useMediaQuery(theme.breakpoints.down('sm'))
   const isVerySmall = useMediaQuery(theme.breakpoints.between(0, 470))
 
   const [realtors, setRealtors] = React.useState<Realtor[]>([])
-  const [realtorId, setRealtorId] = React.useState<string>(typeof rid === 'string' ? rid : '0');
+  const [realtorId, setRealtorId] = React.useState<string>('0');
   const [unreadCount, setUnreadCount] = React.useState<number>(0);
   const [selectedMessageIndex, setSelectedMessageIndex] = React.useState<number>(-1);
   const [messages, setMessages] = React.useState<Message[]>([]);
@@ -80,7 +87,7 @@ export default function Layout(props: LayoutProps) {
   const [loading, setLoading] = React.useState(false);
   const [hasNextPage, setHasNextPage] = React.useState(true);
 
-  const onRailtorChanged = async (newRealtorId: string) => {
+  const onRailtorChanged = async (newRealtorId: string, initialMessageId?: string) => {
     const realtor = await fetchRealtor(newRealtorId)
     const messages = await fetchMessages(newRealtorId, 1)
 
@@ -92,7 +99,31 @@ export default function Layout(props: LayoutProps) {
     setRealtorId(newRealtorId)
     setMessages(messages ?? [])
     setUnreadCount(realtor.unread_messages)
-    setLoading(false)
+    
+    if (typeof initialMessageId !== 'string') {
+      setLoading(false)
+      return
+    }
+
+    fetchMessage(newRealtorId, initialMessageId)
+    .then((messageResp: Message) => {
+      if (!messageResp) { return }
+      
+      setSelectedMessage(messageResp)
+
+      const index = messages.findIndex((message) => message.id == initialMessageId)
+      setSelectedMessageIndex(index)
+
+      handleUnreadCount({ 
+        index, 
+        message: messageResp, 
+        messagesOverride: messages,
+        overrideRid: newRealtorId,
+        overrideUnreadCount: realtor.unread_messages,
+       })
+
+      setLoading(false)
+    })
   }
   
   const loadMore = async () => {
@@ -112,19 +143,29 @@ export default function Layout(props: LayoutProps) {
     setHasNextPage(newMessages.length === PAGE_SIZE)
   }
 
-  const handleUnreadCount = (message: Message, index: number) => {
+  const handleUnreadCount = ({ 
+    index, 
+    message, 
+    messagesOverride, 
+    overrideRid, 
+    overrideUnreadCount, 
+  }: HandleUnreadCountProps) => {
     if (message.read) { return }
 
-    setUnreadCount(unreadCount - 1)
-
+    const count = overrideUnreadCount ?? unreadCount
+    
+    setUnreadCount(count - 1)
+    
     if (index > -1) {
-      messages[index].read = true
-      setMessages(messages)
+      const availableMessages = messagesOverride ?? messages
+      availableMessages[index].read = true
+      setMessages(availableMessages)
     }
+    
+    const rid = overrideRid ?? realtorId ?? 0
+    if (rid === '0') { return }
 
-    if (realtorId === '0') { return }
-
-    fetch(`${BASE_URL}/realtors/${realtorId}/messages/${message.id}`, {
+    fetch(`${BASE_URL}/realtors/${rid}/messages/${message.id}`, {
       method: 'PATCH',
       body: JSON.stringify({
         read: true,
@@ -147,7 +188,7 @@ export default function Layout(props: LayoutProps) {
         'Content-type': 'application/json; charset=UTF-8',
       },
     })
-
+    
     if (selectedMessageIndex < 0) { return }
     messages[selectedMessageIndex].read = false
     setUnreadCount(unreadCount + 1)
@@ -163,7 +204,7 @@ export default function Layout(props: LayoutProps) {
   const onSelectedMessageChanged = (message: Message, index: number) => {
     setSelectedMessage(message)
     setSelectedMessageIndex(index)
-    handleUnreadCount(message, index)
+    handleUnreadCount({ message, index })
     window.history.pushState({}, '', `/realtors/${realtorId}/messages/${message.id}`)
   }
 
@@ -201,25 +242,15 @@ export default function Layout(props: LayoutProps) {
   )
   
   useEffect(() => {
-    const { rid: newRid, mid: newMid } = router.query
-    if (typeof newRid !== 'string') {
+    const { rid, mid } = router.query
+    if (typeof rid !== 'string') {
       return
     }
+
+    const initialMessageId = typeof mid === 'string' ? mid : undefined
 
     clearTimeout(_debounce)
-    onRailtorChanged(newRid)
-
-    if (typeof newMid !== 'string') {
-      return
-    }
-
-    fetchMessage(newRid, newMid)
-    .then((messageResp) => {
-      if (!messageResp) { return }
-      
-      setSelectedMessage(messageResp)
-      handleUnreadCount(messageResp, -1)
-    })
+    onRailtorChanged(rid, initialMessageId)
   }, [router.query.rid, router.query.mid])
 
   useEffect(() => {
