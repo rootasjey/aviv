@@ -19,12 +19,13 @@ import IconButton from "@mui/material/IconButton";
 
 type ComponentProps = {
   hidden: boolean
+  isMobileSize: boolean
   markUnread: Function
   onBack: Function
   selectedMessage: Message | undefined
 }
 
-export default function MessageDetails({ hidden, markUnread, onBack, selectedMessage,  } : ComponentProps) {
+export default function MessageDetails({ hidden, isMobileSize, markUnread, onBack, selectedMessage,  } : ComponentProps) {
   const emptyComponent = (
     <>
       <div className={styles.center__icon}><MailIcon sx={{ fontSize: 60 }}/></div>
@@ -119,7 +120,11 @@ export default function MessageDetails({ hidden, markUnread, onBack, selectedMes
     )
 
   return (
-    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+    <Box component="main" sx={{ 
+        flexGrow: 1, 
+        p: isMobileSize ? 0 : 3, 
+        pt: 2 
+      }}>
         <Toolbar />
         {buttonBar}
         {child}

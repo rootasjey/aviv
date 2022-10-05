@@ -235,6 +235,7 @@ export default function Layout(props: LayoutProps) {
   const messageDetails = (
     <MessageDetails 
       hidden={isMobileSize && noMessageSelected}
+      isMobileSize={isMobileSize}
       markUnread={markUnread}
       onBack={onBack}
       selectedMessage={selectedMessage}
