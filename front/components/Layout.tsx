@@ -107,7 +107,9 @@ export default function Layout(props: LayoutProps) {
 
     fetchMessage(newRealtorId, initialMessageId)
     .then((messageResp: Message) => {
-      if (!messageResp) { return }
+      if (!messageResp || messageResp.code === 404) { 
+        return
+      }
       
       setSelectedMessage(messageResp)
 

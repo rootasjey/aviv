@@ -1,18 +1,19 @@
 type Contact = {
-  email: string;
-  firstname: string;
-  lastname: string;
-  phone: string;
+  email: string
+  firstname: string
+  lastname: string
+  phone: string
 }
 
 type Message = {
-  body: string;
-  contact: Contact, 
-  date: string;
-  id: string;
-  type: string;
-  read: boolean;
-  subject: string; 
+  body: string
+  code?: number
+  contact: Contact
+  date: string
+  id: string
+  type: string
+  read: boolean
+  subject: string 
 }
 
 type Realtor = {
