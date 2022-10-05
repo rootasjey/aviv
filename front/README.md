@@ -1,34 +1,80 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# aviv
 
-## Getting Started
+![](../screnshots/aviv_demo_1.mp4)
 
-First, run the development server:
+| Desktop | Mobile |
+|---------|--------|
+| ![](../screnshots/desktop_1.png) | <img src="../screnshots/mobile_1.png" style="width: 60%;" /> |
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+[Video demo](../screnshots/aviv_demo_1.mp4)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This is an application prototype on a backoffice to view and manages messages from various sources (email, phone, sms).
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+# 🎉 Features 
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Here are the basic features developed for this app:
 
-## Learn More
+* View messages of a realtor
+* Switch realtor from the top select in the appbar
+* Follow unread count
+* View message content and details (this will mark it as read)
+* Icon button to mark a message as unread
+* Responsive → mobile view
 
-To learn more about Next.js, take a look at the following resources:
+# 🚀 Run the app
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prerequesites:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+* [docker](https://docker.com) for the backend API
+* [node.js](https://nodejs.org) to start the frontend app
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Start the frontend app:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+* Clone the repo: `git clone https://github.com/rootasjey/aviv.git`
+* Go to the front folder: `cd aviv/front`
+* Run the frontend app: `yarn start` or `npm start`
+
+Start the docker image (if not already done):
+
+* Install [docker](https://docker.com)
+* Start the image with: `docker run -p 8080:8080 --rm --name MA-FTT-API meilleursagents/frontend-technical-test-api`
+
+Enjoy.
+
+# 🤓 Tech Stack
+
+These tools helped build this app:
+
+* [TypeScript](https://www.typescriptlang.org/) → Main language
+* [Next.js](https://nextjs.org) → build frontend
+* [mui](https://mui.com) → visual design
+* [emotion](https://emotion.sh) → styling
+* [dayjs](https://day.js.org) → relative time
+* [react-infinite-scroll-hook](https://github.com/onderonur/react-infinite-scroll-hook) → infinite scroll
+
+# 🧪 Testing
+
+There are unit testing done with [`react-testing-library`](https://testing-library.com) and [`jest`](https://jestjs.io), and end to end tests done with [`cypress`](https://cypress.io).
+
+* Unit tests are located in the folder: `__tests___`
+* E2E tests are located in the folder: `cypress`
+
+We test component in isolation with `testing-library` and the complete application with `cypress`.
+
+Note that to run `cypress` scenarios, you'll need to start:
+
+* docker image
+* frontend app
+* cypress
+
+What we test:
+
+* That information are displayed correctly
+* Switching agency update the user inface
+* Clicking on a message open the details pane
+* The unread count correctly updates
+* URLs matchs the application's state
+
+There could be an integration test for the `<Layout />` component.
