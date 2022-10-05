@@ -19,17 +19,21 @@ describe('mobile tests', () => {
     cy.get('option').contains('Agence #101').should('have.selected')
     
     const message1 = cy.get('ul').children().first()
-    
+
+    cy.wait(100)
     cy.get('select').select('Agence #102')
     cy.contains('Agence #102').should('have.selected')
     cy.get('ul').children().should('have.length.greaterThan', 0)
-    
+
+    cy.wait(100)
     const message2 = cy.get('ul').children().first()
-    
+
+    cy.wait(100)
     cy.get('select').select('Agence #103')
     cy.contains('Agence #103').should('have.selected')
     cy.get('ul').children().should('have.length.greaterThan', 0)
     
+    cy.wait(100)
     const message3 = cy.get('ul').children().first()
 
     message1.then(($message1) => {
@@ -52,6 +56,8 @@ describe('mobile tests', () => {
     cy.get('main').contains('Click on a message to show its content.').should('not.exist')
     cy.get('main').get('button[aria-label="back"]')
     .should('be.visible')
+
+    cy.url().should('eq', 'http://localhost:3000/realtors/101/messages/10100')
     
     cy.get('main').get('div').contains('John Davis')
     cy.get('main').get('div').contains('Email')
@@ -61,6 +67,7 @@ describe('mobile tests', () => {
     
     cy.get('main').get('button[aria-label="back"]').click()
     cy.get('p').contains('Click on a message to show its content.').should('exist')
+    cy.url().should('eq', 'http://localhost:3000/realtors/101')
   })
 
   it('should load more messages on scroll', async () => {
